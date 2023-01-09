@@ -2,13 +2,12 @@ package io.github.yuk7.uaaltest.android.ui.top
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,35 +28,25 @@ fun TopScreen(
     mainActivityViewModel: MainActivityViewModel,
     viewModel: TopViewModel
 ) {
-    val visible = viewModel.visibleFlow.collectAsState().value
-    val colorSaver = Saver<Color, Int>(
-        save = {
-            it.toArgb()
-        },
-        restore = {
-            Color(it)
-        }
-    )
-
-    var color by rememberSaveable(stateSaver = colorSaver) { mutableStateOf(Color.White) }
+    val state = viewModel.state.collectAsState().value
 
     LaunchedEffect(mainActivityViewModel.clickCubeFlow) {
         mainActivityViewModel.clickCubeFlow.collect {
-            viewModel.setVisible(true)
+            viewModel.setColorPickerVisible(true)
         }
     }
 
-    LaunchedEffect(key1 = color, key2 = Unit) {
-        UnityPlayer.UnitySendMessage("Cube", "ChangeColor", color.toHtmlHex())
+    LaunchedEffect(key1 = state.cubeColor, key2 = Unit) {
+        UnityPlayer.UnitySendMessage("Cube", "ChangeColor", state.cubeColor.toHtmlHex())
     }
 
     TopScreenContent(
         onClickBlue = { navHostController.navigateToBlue() },
         onClickYellow = { navHostController.navigateToYellow() },
-        color = color,
-        colorPickerVisible = visible,
-        onColorPickerColorChanged = { color = it },
-        onCloseColorPicker = { viewModel.setVisible(false) }
+        color = state.cubeColor,
+        colorPickerVisible = state.colorPickerVisible,
+        onColorPickerColorChanged = { viewModel.setCubeColor(it) },
+        onCloseColorPicker = { viewModel.setColorPickerVisible(false) }
     )
 }
 
