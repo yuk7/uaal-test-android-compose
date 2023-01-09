@@ -30,6 +30,6 @@ fun InitializeRoutes(navHostController: NavHostController, mainActivityViewModel
     NavHost(navHostController, startDestination = Screen.TOP.name) {
         composable(Screen.TOP.name) { TopScreen(navHostController, mainActivityViewModel, hiltViewModel()) }
         composable(Screen.BLUE.name) { BlueScreen(navHostController) }
-        composable(Screen.YELLOW.name) { YellowScreen(navHostController) }
+        composable(Screen.YELLOW.name) { YellowScreen(navHostController, mainActivityViewModel) }
     }
 }
