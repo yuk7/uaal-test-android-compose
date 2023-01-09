@@ -3,6 +3,7 @@ package io.github.yuk7.uaaltest.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.Keep
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.displayCutoutPadding
@@ -21,13 +22,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.yuk7.uaaltest.android.ui.InitializeRoutes
 import io.github.yuk7.uaaltest.android.ui.blue.BlueScreen
 import io.github.yuk7.uaaltest.android.ui.theme.AppTheme
 import io.github.yuk7.uaaltest.android.ui.top.TopScreen
 import io.github.yuk7.uaaltest.android.ui.yellow.YellowScreen
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainActivityViewModel by viewModels()
+
     companion object {
         @Keep
         var instance: MainActivity? = null
@@ -44,13 +51,15 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    InitializeRoutes(navController)
+                    InitializeRoutes(navController, viewModel)
                 }
             }
         }
     }
 
+    @Keep
+    @Suppress("unused")
     fun onUnityObjectClick(data: String) {
-
+        viewModel.clickUnityCube(data)
     }
 }
